@@ -1,0 +1,1282 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MTs Hasyim Asy'ari Tunjungmuli</title>
+    
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'deep-forest': '#2D5A27',
+                        'fresh-green': '#4CAF50',
+                        'warm-gray': '#F8F9FA'
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #F8F9FA;
+            color: #1F2937;
+        }
+
+        .page-section {
+            display: none;
+            opacity: 0;
+            transition: opacity 0.4s ease-in-out;
+        }
+        
+        .page-section.active {
+            display: block;
+            opacity: 1;
+        }
+
+        .btn-interactive {
+            transition: all 0.2s ease;
+        }
+        .btn-interactive:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+        .btn-interactive:active {
+            transform: translateY(1px) scale(0.97);
+            box-shadow: none;
+        }
+
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        .tab-btn.active {
+            border-left: 4px solid #4CAF50;
+            background-color: #f3f4f6;
+            font-weight: 600;
+        }
+
+        .nav-link {
+            position: relative;
+        }
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -4px;
+            left: 0;
+            background-color: #4CAF50;
+            transition: width 0.3s ease;
+        }
+        .nav-link:hover::after, .nav-link.active::after {
+            width: 100%;
+        }
+        .nav-link.active {
+            color: #2D5A27;
+            font-weight: 600;
+        }
+
+        .item-hidden {
+            display: none !important;
+        }
+        .item-visible {
+            animation: fadeIn 0.4s ease-in-out forwards;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        #gallery-modal {
+            transition: opacity 0.3s ease-in-out;
+            backdrop-filter: blur(5px);
+        }
+    </style>
+</head>
+<body class="antialiased min-h-screen flex flex-col">
+
+    <!-- Navbar -->
+    <nav class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <!-- Logo -->
+                <div class="flex items-center cursor-pointer" onclick="navigateTo('beranda')">
+                    <div class="w-10 h-10 bg-deep-forest text-white rounded-full flex items-center justify-center font-bold text-xl mr-3">
+                        <img src="assets/img/Logo MTsHA 2021 Col Trans.png" alt="Logo MTs Hasyim Asy'ari">
+                    </div>
+                    <div>
+                        <h1 class="font-bold text-lg leading-tight text-deep-forest">MTs Hasyim Asy'ari</h1>
+                        <p class="text-xs text-gray-500 tracking-widest uppercase">Tunjungmuli</p>
+                    </div>
+                </div>
+
+                <!-- Desktop Menu -->
+                <div class="hidden md:flex space-x-8 items-center">
+                    <button onclick="navigateTo('beranda')" class="nav-link text-gray-600 hover:text-deep-forest transition text-sm">Beranda</button>
+                    <button onclick="navigateTo('tentang')" class="nav-link text-gray-600 hover:text-deep-forest transition text-sm">Tentang Madrasah</button>
+                    <button onclick="navigateTo('akademik')" class="nav-link text-gray-600 hover:text-deep-forest transition text-sm">Akademik</button>
+                    <button onclick="navigateTo('berita')" class="nav-link text-gray-600 hover:text-deep-forest transition text-sm">Berita & Pengumuman</button>
+                    <button onclick="navigateTo('galeri')" class="nav-link text-gray-600 hover:text-deep-forest transition text-sm">Galeri</button>
+                    <button onclick="navigateTo('kontak')" class="nav-link text-gray-600 hover:text-deep-forest transition text-sm">Kontak</button>
+                    <button onclick="navigateTo('ppdb')" class="bg-deep-forest text-white px-5 py-2.5 rounded-lg btn-interactive flex items-center gap-2 text-sm font-semibold">
+                        PPDB <i class="fas fa-arrow-right text-xs"></i>
+                    </button>
+                </div>
+
+                <!-- Mobile Menu Button -->
+                <div class="md:hidden flex items-center">
+                    <button id="mobile-menu-btn" class="text-gray-600 hover:text-deep-forest focus:outline-none text-2xl">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Mobile Menu Panel -->
+        <div id="mobile-menu" class="hidden md:hidden bg-white border-t border-gray-100 absolute w-full shadow-lg">
+            <div class="px-4 pt-2 pb-6 space-y-1">
+                <button onclick="navigateTo('beranda'); toggleMobileMenu()" class="block w-full text-left px-3 py-3 text-gray-700 hover:bg-gray-50 rounded-md">Beranda</button>
+                <button onclick="navigateTo('tentang'); toggleMobileMenu()" class="block w-full text-left px-3 py-3 text-gray-700 hover:bg-gray-50 rounded-md">Tentang Madrasah</button>
+                <button onclick="navigateTo('akademik'); toggleMobileMenu()" class="block w-full text-left px-3 py-3 text-gray-700 hover:bg-gray-50 rounded-md">Akademik</button>
+                <button onclick="navigateTo('berita'); toggleMobileMenu()" class="block w-full text-left px-3 py-3 text-gray-700 hover:bg-gray-50 rounded-md">Berita</button>
+                <button onclick="navigateTo('galeri'); toggleMobileMenu()" class="block w-full text-left px-3 py-3 text-gray-700 hover:bg-gray-50 rounded-md">Galeri</button>
+                <button onclick="navigateTo('kontak'); toggleMobileMenu()" class="block w-full text-left px-3 py-3 text-gray-700 hover:bg-gray-50 rounded-md">Kontak</button>
+                <button onclick="navigateTo('ppdb'); toggleMobileMenu()" class="block w-full text-left px-3 py-3 bg-deep-forest text-white text-center rounded-md font-medium mt-4">Daftar PPDB</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- MAIN CONTENT AREA -->
+    <main class="flex-grow">
+
+        <!-- ==================== HALAMAN 1: BERANDA ==================== -->
+        <section id="beranda" class="page-section active">
+            <!-- Hero -->
+            <div class="bg-deep-forest relative overflow-hidden">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 py-16 md:py-24 flex flex-col md:flex-row items-center">
+                    <div class="w-full md:w-1/2 pr-0 md:pr-12 text-white">
+                        <span class="inline-block bg-white/20 px-3 py-1 rounded-full text-sm font-medium mb-6 backdrop-blur-sm">
+                            <i class="fas fa-bookmark text-fresh-green mr-2"></i> Terakreditasi B
+                        </span>
+                        <h1 class="text-4xl md:text-5xl font-bold leading-tight mb-6">
+                            Membentuk Generasi <span class="text-fresh-green">Berakhlak Mulia</span> & Unggul Akademik
+                        </h1>
+                        <p class="text-gray-200 text-lg mb-8 leading-relaxed">
+                            Selamat datang di website resmi MTs Hasyim Asy'ari Tunjungmuli, Karangmoncol, Purbalingga. Madrasah modern bernuansa religi dalam mengukir masa depan cemerlang.
+                        </p>
+                        <div class="flex flex-wrap gap-4">
+                            <button onclick="navigateTo('ppdb')" class="bg-fresh-green text-white px-6 py-3 rounded-lg font-semibold btn-interactive flex items-center gap-2">
+                                PPDB <i class="fas fa-arrow-right"></i>
+                            </button>
+                            <button onclick="navigateTo('tentang')" class="bg-white text-deep-forest px-6 py-3 rounded-lg font-semibold btn-interactive hover:bg-gray-50">
+                                Jelajahi Profil
+                            </button>
+                        </div>
+                    </div>
+                    <div class="w-full md:w-1/2 mt-12 md:mt-0 relative">
+                        <div class="absolute -inset-4 bg-fresh-green/20 rounded-[2rem] blur-lg"></div>
+                        <img src="assets/img/gerbang.png" alt="Gerbang Madrasah" class="rounded-2xl shadow-2xl relative z-10 w-full h-[350px] object-cover border-4 border-white/10">
+                        <div class="absolute bottom-4 left-4 right-4 bg-black/60 backdrop-blur-md text-white p-4 rounded-xl z-20">
+                            <p class="text-xs text-fresh-green font-bold tracking-wider mb-1">GERBANG MADRASAH</p>
+                            <p class="font-medium">MTs Hasyim Asy'ari Tunjungmuli</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stats Bar -->
+            <div class="max-w-5xl mx-auto px-4 -mt-8 relative z-20">
+                <div class="bg-white rounded-2xl shadow-xl p-8 flex flex-col md:flex-row justify-around items-center gap-8 divide-y md:divide-y-0 md:divide-x divide-gray-100">
+                    <div class="flex items-center gap-4 px-4 w-full justify-center">
+                        <div class="w-14 h-14 bg-green-50 rounded-full flex items-center justify-center text-fresh-green text-2xl">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-3xl font-bold text-gray-800">250+</h3>
+                            <p class="text-sm text-gray-500">Siswa Aktif</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-4 px-4 w-full justify-center pt-6 md:pt-0">
+                        <div class="w-14 h-14 bg-blue-50 rounded-full flex items-center justify-center text-blue-500 text-2xl">
+                            <i class="fas fa-user-tie"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-3xl font-bold text-gray-800">29</h3>
+                            <p class="text-sm text-gray-500">Guru & Staf</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-4 px-4 w-full justify-center pt-6 md:pt-0">
+                        <div class="w-14 h-14 bg-orange-50 rounded-full flex items-center justify-center text-orange-500 text-2xl">
+                            <i class="fas fa-building"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-3xl font-bold text-gray-800">12</h3>
+                            <p class="text-sm text-gray-500">Ruang Kelas</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sambutan Kepala Madrasah -->
+            <div class="max-w-6xl mx-auto px-4 py-24">
+                <div class="bg-white rounded-[2rem] p-8 md:p-12 shadow-sm border border-gray-100 flex flex-col md:flex-row gap-12 items-center">
+                    <div class="w-full md:w-1/3 text-center">
+                        <div class="relative inline-block">
+                            <div class="absolute inset-0 bg-deep-forest translate-x-3 translate-y-3 rounded-xl"></div>
+                            <img src="assets/img/Foto Ahmad Najib, S.Pd.I..jpeg" alt="Kepala Madrasah" class="rounded-xl relative z-10 w-full h-auto object-cover border-4 border-white">
+                        </div>
+                        <h4 class="font-bold text-lg mt-6">Ahmad Najib, S.Pd.I.</h4>
+                        <p class="text-gray-500 text-sm">Kepala MTs Hasyim Asy'ari</p>
+                    </div>
+                    <div class="w-full md:w-2/3">
+                        <h2 class="text-3xl md:text-4xl font-bold mb-6 text-gray-800 leading-tight">Mendidik dengan Hati, Membekali dengan Teknologi, Berpondasikan Aswaja</h2>
+                        <div class="space-y-4 text-gray-600 leading-relaxed">
+                            <p class="italic">Assalamu'alaikum Warahmatullahi Wabarakatuh,</p>
+                            <p>Segala puji bagi Allah SWT, Tuhan semesta alam, yang telah menganugerahkan taufik dan hidayah-Nya kepada kita semua. Di era disrupsi digital yang bergerak begitu dinamis, MTs Hasyim Asy'ari Tunjungmuli berkomitmen tinggi untuk menghadirkan iklim pendidikan yang relevan, seimbang, dan kokoh lahir batin.</p>
+                            <p>Kami menyadari bahwa kecerdasan intelektual saja tidaklah cukup. Oleh karena itu, kurikulum madrasah kami integrasikan penuh dengan adab Islami khas ulama Nusantara Ahlussunnah wal Jama'ah.</p>
+                        </div>
+                        <button onclick="navigateTo('tentang')" class="mt-8 text-deep-forest font-semibold hover:text-fresh-green transition flex items-center gap-2 group">
+                            Baca Selengkapnya Tentang Kami <i class="fas fa-arrow-right transform group-hover:translate-x-1 transition"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Berita Beranda -->
+            <div class="bg-gray-50 py-24">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="flex justify-between items-end mb-10 border-b border-gray-200 pb-4">
+                        <div>
+                            <p class="text-fresh-green font-semibold tracking-wider text-sm mb-2">BERITA & INFORMASI</p>
+                            <h2 class="text-3xl font-bold text-gray-800">Kabar Terbaru Madrasah</h2>
+                        </div>
+                        <button onclick="navigateTo('berita')" class="hidden md:flex text-deep-forest font-medium items-center gap-2 px-4 py-2 border border-deep-forest rounded-lg hover:bg-deep-forest hover:text-white transition">
+                            Buka Semua Berita <i class="fas fa-arrow-right text-sm"></i>
+                        </button>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                        <div class="bg-white rounded-xl overflow-hidden shadow-sm card-hover cursor-pointer border border-gray-100" onclick="navigateTo('detail-berita')">
+                            <img src="https://images.unsplash.com/photo-1555597673-b21d5c935865?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Pencak Silat" class="w-full h-48 object-cover">
+                            <div class="p-6">
+                                <div class="text-xs text-gray-500 mb-3 flex items-center gap-2"><i class="far fa-calendar-alt"></i> 18 Mei 2019</div>
+                                <h3 class="font-bold text-lg mb-3 line-clamp-2 leading-tight">Juara 2 Pencak Silat Putra & Putri Piala Bupati Purbalingga 2019</h3>
+                                <p class="text-gray-600 text-sm line-clamp-3 mb-4">MTs Hasyim Asy'ari berhasil menorehkan prestasi yang membanggakan dalam ajang Piala Bupati Purbalingga. Dalam kompetisi ini...</p>
+                                <div class="text-fresh-green font-medium text-sm flex items-center gap-1 border-t pt-4">Baca Selengkapnya <i class="fas fa-arrow-right text-xs ml-auto"></i></div>
+                            </div>
+                        </div>
+                        <div class="bg-white rounded-xl overflow-hidden shadow-sm card-hover cursor-pointer border border-gray-100" onclick="navigateTo('detail-berita')">
+                            <img src="assets/img/baca.jpeg" alt="MTQ" class="w-full h-48 object-cover">
+                            <div class="p-6">
+                                <div class="text-xs text-gray-500 mb-3 flex items-center gap-2"><i class="far fa-calendar-alt"></i> 18 Mei 2018</div>
+                                <h3 class="font-bold text-lg mb-3 line-clamp-2 leading-tight">Juara 3 MTQ Putra Tingkat Kecamatan Tahun 2018</h3>
+                                <p class="text-gray-600 text-sm line-clamp-3 mb-4">MTs Hasyim Asy'ari berhasil meraih prestasi yang membanggakan dalam ajang Musabaqah Tilawatil Qur'an (MTQ) tingkat kecamatan...</p>
+                                <div class="text-fresh-green font-medium text-sm flex items-center gap-1 border-t pt-4">Baca Selengkapnya <i class="fas fa-arrow-right text-xs ml-auto"></i></div>
+                            </div>
+                        </div>
+                        <div class="bg-white rounded-xl overflow-hidden shadow-sm card-hover cursor-pointer border border-gray-100" onclick="navigateTo('detail-berita')">
+                            <img src="assets/img/baca2.jpeg" alt="Tartil" class="w-full h-48 object-cover">
+                            <div class="p-6">
+                                <div class="text-xs text-gray-500 mb-3 flex items-center gap-2"><i class="far fa-calendar-alt"></i> 18 Mei 2018</div>
+                                <h3 class="font-bold text-lg mb-3 line-clamp-2 leading-tight">Juara 2 Tartil Putra Tingkat Kecamatan Tahun 2018</h3>
+                                <p class="text-gray-600 text-sm line-clamp-3 mb-4">MTs Hasyim Asy'ari kembali menunjukkan prestasinya dalam bidang keagamaan dengan meraih penghargaan pada lomba tartil...</p>
+                                <div class="text-fresh-green font-medium text-sm flex items-center gap-1 border-t pt-4">Baca Selengkapnya <i class="fas fa-arrow-right text-xs ml-auto"></i></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CTA Bottom -->
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
+                <div class="bg-deep-forest rounded-3xl p-10 md:p-16 flex flex-col md:flex-row items-center justify-between relative overflow-hidden">
+                    <div class="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]"></div>
+                    <div class="relative z-10 w-full md:w-2/3 mb-8 md:mb-0">
+                        <h2 class="text-3xl md:text-4xl font-bold text-white mb-4 leading-tight">Mulai Masa Depan Hebat Bersama MTs Hasyim Asy'ari</h2>
+                        <p class="text-gray-300 text-lg">Bimbingan akhlak unggul, pembiasaan religius Aswaja, dan lingkungan asri di Tunjungmuli siap melahirkan siswa yang cerdas, kreatif, dan berbakti. Daftar PPDB 2026/2027 sekarang juga!</p>
+                    </div>
+                    <div class="relative z-10 w-full md:w-auto flex flex-col sm:flex-row gap-4">
+                        <button onclick="navigateTo('ppdb')" class="bg-white text-deep-forest font-bold px-8 py-4 rounded-xl btn-interactive w-full sm:w-auto text-center shadow-lg">Mulai Mendaftar</button>
+                        <button onclick="navigateTo('kontak')" class="bg-transparent border border-white text-white font-bold px-8 py-4 rounded-xl btn-interactive w-full sm:w-auto text-center hover:bg-white/10">Tanya Via WhatsApp</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- ==================== HALAMAN 2: TENTANG MADRASAH ==================== -->
+        <section id="tentang" class="page-section">
+            <div class="bg-deep-forest py-16 text-center text-white relative">
+                <i class="fas fa-landmark text-5xl mb-4 text-fresh-green opacity-80"></i>
+                <h1 class="text-4xl font-bold mb-2">Profil Madrasah</h1>
+                <p class="text-gray-300 max-w-2xl mx-auto px-4">Kenali lebih dekat MTs Hasyim Asy'ari Tunjungmuli: dari visi luhur kepesantrenan hingga langkah kemajuan masa kini.</p>
+            </div>
+
+            <div class="max-w-7xl mx-auto px-4 py-16">
+                <!-- Visi Misi -->
+                <div class="grid grid-cols-1 md:grid-cols-12 gap-8 mb-16">
+                    <div class="md:col-span-5 bg-deep-forest rounded-2xl p-10 text-white relative overflow-hidden shadow-lg">
+                        <div class="absolute top-0 right-0 p-6 opacity-20"><i class="fas fa-compass text-6xl"></i></div>
+                        <p class="text-fresh-green font-bold tracking-widest text-sm mb-4">PILAR PANDUAN</p>
+                        <h2 class="text-4xl font-bold mb-8">Visi Madrasah</h2>
+                        <div class="border-l-4 border-fresh-green pl-6 py-2 mb-8">
+                            <p class="text-2xl font-medium italic leading-relaxed">"Berakhlakul Karimah, Berkualitas, dan Berbudaya"</p>
+                        </div>
+                        <div class="border-t border-white/20 pt-4 mt-auto">
+                            <p class="text-sm text-gray-300"><i class="fas fa-check-circle mr-2 text-fresh-green"></i> Ditetapkan bersama Ketua Yayasan & Dewan Guru</p>
+                        </div>
+                    </div>
+                    
+                    <div class="md:col-span-7 bg-white rounded-2xl p-10 shadow-sm border border-gray-100">
+                        <p class="text-deep-forest font-bold tracking-widest text-sm mb-2">MEWUJUDKAN VISI</p>
+                        <h2 class="text-3xl font-bold mb-8 text-gray-800">Misi Madrasah</h2>
+                        <ul class="space-y-5 text-gray-600">
+                            <li class="flex items-start gap-4">
+                                <span class="flex-shrink-0 w-8 h-8 rounded-full bg-green-100 text-deep-forest flex items-center justify-center font-bold">1</span>
+                                <p class="pt-1">Melaksanakan Pembelajaran dan Bimbingan Secara Efektif.</p>
+                            </li>
+                            <li class="flex items-start gap-4">
+                                <span class="flex-shrink-0 w-8 h-8 rounded-full bg-green-100 text-deep-forest flex items-center justify-center font-bold">2</span>
+                                <p class="pt-1">Menanamkan dan Menumbuhkembangkan Semangat Berkompetisi.</p>
+                            </li>
+                            <li class="flex items-start gap-4">
+                                <span class="flex-shrink-0 w-8 h-8 rounded-full bg-green-100 text-deep-forest flex items-center justify-center font-bold">3</span>
+                                <p class="pt-1">Senantiasa Mendorong Semangat Siswa untuk Menggali Potensi Diri.</p>
+                            </li>
+                            <li class="flex items-start gap-4">
+                                <span class="flex-shrink-0 w-8 h-8 rounded-full bg-green-100 text-deep-forest flex items-center justify-center font-bold">4</span>
+                                <p class="pt-1">Menumbuhkan Kesadaran dan Penghayatan Secara Mendalam Terhadap Ajaran Agama Islam.</p>
+                            </li>
+                            <li class="flex items-start gap-4">
+                                <span class="flex-shrink-0 w-8 h-8 rounded-full bg-green-100 text-deep-forest flex items-center justify-center font-bold">5</span>
+                                <p class="pt-1">Senantiasa Mengikuti Laju Perkembangan dan Perubahan Kemajuan Ilmu Pengetahuan dan Teknologi.</p>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Profil Sekolah Text -->
+                <div class="bg-white rounded-2xl p-10 md:p-16 shadow-sm border border-gray-100 mb-20">
+                    <h2 class="text-3xl font-bold mb-8 text-center text-gray-800">Profil Sekolah</h2>
+                    <div class="space-y-6 text-gray-600 leading-relaxed max-w-4xl mx-auto text-justify">
+                        <p>Madrasah Tsanawiyah Hasyim Asy'ari berada di Jalan Raya Tunjungmuli - Bobotsari Km. 01, Dusun Gondang, Desa Tunjungmuli, Kecamatan Karangmoncol, Kabupaten Purbalingga, Jawa Tengah. Didirikan pada tahun 1983 oleh para tokoh masyarakat dan tokoh agama setempat. MTs Hasyim Asy'ari Tunjungmuli berada di bawah naungan Yayasan Mamba'ul 'Ulum Tunjungmuli.</p>
+                        <p>Yayasan Mamba'ul 'Ulum Tunjungmuli beralamat di Jl. K.H. Muhammad Roni, Tobong Pesantren, Desa Tunjungmuli, kecamatan Karangmoncol, kabupaten Purbalingga, Jawa Tengah. Selain mengelola Pondok Pesantren Yayasan Mamba'ul 'Ulum Tunjungmuli juga mengelola beberapa lembaga pendidikan formal mulai dari PAUD, RA, MI, MTs, MA bahkan SMK.</p>
+                        <p>MTs Hasyim Asy'ari Tunjungmuli juga termasuk anggota Lembaga Pendidikan Ma'arif Nahdlatul 'Ulama Kabupaten Purbalingga. Dari sini jelas bahwa MTs Hasyim Asy'ari Tunjungmuli merupakan madrasah yang berhalauan Ahlussunnah Waljama'ah An-Nahdliyyah.</p>
+                    </div>
+                </div>
+
+                <!-- Guru & Staf Section dengan fitur Load More -->
+                <div class="text-center mb-10" id="guru-section-title">
+                    <h2 class="text-4xl font-bold text-gray-800">Guru & Staf</h2>
+                </div>
+                
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6" id="guru-grid">
+                    <!-- 8 Guru Utama (Selalu Tampil) -->
+                    <div class="bg-white rounded-xl overflow-hidden shadow-sm border border-gray-100 text-center card-hover">
+                        <img src="assets/img/Foto Ahmad Najib, S.Pd.I..jpeg" alt="Guru" class="w-full h-64 object-cover object-top bg-red-100">
+                        <div class="p-4 bg-white">
+                            <h4 class="font-bold text-gray-800">Bapak Ahmad Najib, S.Pd.I.</h4>
+                            <p class="text-sm text-gray-500 mt-1">(Kepala Madrasah)</p>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-xl overflow-hidden shadow-sm border border-gray-100 text-center card-hover">
+                        <img src="assets/img/Foto Ah. Ghufron, S.Pd.I..jpeg" alt="Guru" class="w-full h-64 object-cover object-top bg-blue-100">
+                        <div class="p-4 bg-white">
+                            <h4 class="font-bold text-gray-800">Bapak Ah. Ghufron, S.Pd.I.</h4>
+                            <p class="text-sm text-gray-500 mt-1">(Guru Bahasa Arab)</p>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-xl overflow-hidden shadow-sm border border-gray-100 text-center card-hover">
+                        <img src="assets/img/Foto Mukholis, S.Ag..jpeg" alt="Guru" class="w-full h-64 object-cover object-top bg-gray-200">
+                        <div class="p-4 bg-white">
+                            <h4 class="font-bold text-gray-800">Bapak Mukholis, S.Ag.</h4>
+                            <p class="text-sm text-gray-500 mt-1">(Guru Al-Qur'an Hadits)</p>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-xl overflow-hidden shadow-sm border border-gray-100 text-center card-hover">
+                        <img src="assets/img/Foto Nety Hidayati, S.Ag., M.Pd.I..jpeg" alt="Guru" class="w-full h-64 object-cover object-top bg-red-800">
+                        <div class="p-4 bg-white">
+                            <h4 class="font-bold text-gray-800">Ibu Nety Hidayati, S.Ag., M.Pd.I.</h4>
+                            <p class="text-sm text-gray-500 mt-1">(Guru Fikih dan Pembina Pramuka)</p>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-xl overflow-hidden shadow-sm border border-gray-100 text-center card-hover">
+                        <img src="assets/img/Foto Fauzan Fahmi, A.Md..jpeg" alt="Guru" class="w-full h-64 object-cover object-top bg-gray-100">
+                        <div class="p-4 bg-white">
+                            <h4 class="font-bold text-gray-800">Bapak Foto Fauzan Fahmi, A.Md.</h4>
+                            <p class="text-sm text-gray-500 mt-1">(Guru Bahasa Inggris)</p>
+                        </div>
+                    </div>
+                     <div class="bg-white rounded-xl overflow-hidden shadow-sm border border-gray-100 text-center card-hover">
+                        <img src="assets/img/Foto Ahmad Saiful Mujib, S.Pd..jpeg" alt="Guru" class="w-full h-64 object-cover object-top bg-gray-100">
+                        <div class="p-4 bg-white">
+                            <h4 class="font-bold text-gray-800">Bapak Ahmad Saiful Mujib, S.Pd.</h4>
+                            <p class="text-sm text-gray-500 mt-1">(Guru Ilmu Pengetahuan Alam)</p>
+                        </div>
+                    </div>
+                     <div class="bg-white rounded-xl overflow-hidden shadow-sm border border-gray-100 text-center card-hover">
+                        <img src="assets/img/Foto Saefudin, S.Pd.I..jpeg" alt="Guru" class="w-full h-64 object-cover object-top bg-gray-100">
+                        <div class="p-4 bg-white">
+                            <h4 class="font-bold text-gray-800">Bapak Saefudin, S.Pd.I.</h4>
+                            <p class="text-sm text-gray-500 mt-1">(Guru Ilmu Pengetahuan Sosial / Operator Madrasah)</p>
+                        </div>
+                    </div>
+                     <div class="bg-white rounded-xl overflow-hidden shadow-sm border border-gray-100 text-center card-hover">
+                        <img src="assets/img/Foto Siti Munfaridah, S.Pd.I..jpeg" alt="Guru" class="w-full h-64 object-cover object-top bg-gray-100">
+                        <div class="p-4 bg-white">
+                            <h4 class="font-bold text-gray-800">Ibu Siti Munfaridah, S.Pd.I.</h4>
+                            <p class="text-sm text-gray-500 mt-1">(Guru Ilmu Pengetahuan Sosial / Pembina PMR)</p>
+                        </div>
+                    </div>
+
+                    <!-- Guru Ekstra (Disembunyikan secara default) -->
+                    <div class="extra-guru hidden item-hidden bg-white rounded-xl overflow-hidden shadow-sm border border-gray-100 text-center card-hover">
+                        <img src="https://images.unsplash.com/photo-1552058544-f2b08422138a?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80" alt="Guru" class="w-full h-64 object-cover object-top bg-gray-100">
+                        <div class="p-4 bg-white">
+                            <h4 class="font-bold text-gray-800">Bapak Budi Santoso, S.Pd.</h4>
+                            <p class="text-sm text-gray-500 mt-1">(Guru IPS Terpadu)</p>
+                        </div>
+                    </div>
+                    <div class="extra-guru hidden item-hidden bg-white rounded-xl overflow-hidden shadow-sm border border-gray-100 text-center card-hover">
+                        <img src="https://images.unsplash.com/photo-1588516903720-8ceb67f9ef84?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80" alt="Guru" class="w-full h-64 object-cover object-top bg-gray-100">
+                        <div class="p-4 bg-white">
+                            <h4 class="font-bold text-gray-800">Ibu Siti Nurhaliza, S.Ag.</h4>
+                            <p class="text-sm text-gray-500 mt-1">(Guru Akidah Akhlak)</p>
+                        </div>
+                    </div>
+                    <div class="extra-guru hidden item-hidden bg-white rounded-xl overflow-hidden shadow-sm border border-gray-100 text-center card-hover">
+                        <img src="https://images.unsplash.com/photo-1564564244660-5d73c057f2d2?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80" alt="Guru" class="w-full h-64 object-cover object-top bg-gray-100">
+                        <div class="p-4 bg-white">
+                            <h4 class="font-bold text-gray-800">Bapak Rahmat Hidayat, M.Pd.</h4>
+                            <p class="text-sm text-gray-500 mt-1">(Guru PKn)</p>
+                        </div>
+                    </div>
+                    <div class="extra-guru hidden item-hidden bg-white rounded-xl overflow-hidden shadow-sm border border-gray-100 text-center card-hover">
+                        <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80" alt="Guru" class="w-full h-64 object-cover object-top bg-gray-100">
+                        <div class="p-4 bg-white">
+                            <h4 class="font-bold text-gray-800">Ibu Dewi Lestari, S.Pd.</h4>
+                            <p class="text-sm text-gray-500 mt-1">(Guru Bahasa Inggris)</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tombol Load More Guru -->
+                <div class="text-center mt-12">
+                    <button id="btn-toggle-guru" onclick="toggleGuru()" class="px-8 py-3 rounded-full border border-gray-300 text-gray-600 font-semibold hover:bg-gray-50 hover:text-deep-forest transition flex items-center justify-center mx-auto gap-2 bg-white shadow-sm">
+                        Lihat Selengkapnya <i class="fas fa-chevron-down text-sm"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- ==================== HALAMAN 3: AKADEMIK ==================== -->
+        <section id="akademik" class="page-section">
+            <div class="bg-deep-forest py-16 text-center text-white relative">
+                <i class="fas fa-graduation-cap text-5xl mb-4 text-fresh-green opacity-80"></i>
+                <h1 class="text-4xl font-bold mb-2">Program Akademik</h1>
+                <p class="text-gray-300 max-w-2xl mx-auto px-4">Mendidik dengan mengintegrasikan kurikulum nasional, penguasaan sains digital, serta fondasi keilmuan khas pesantren.</p>
+            </div>
+            <div class="max-w-7xl mx-auto px-4 py-16">
+                <!-- Kurikulum -->
+                <div class="flex flex-col md:flex-row gap-12 items-start mb-24">
+                    <div class="w-full md:w-5/12">
+                        <h2 class="text-4xl font-bold mb-6 text-gray-800 leading-tight">Kurikulum & Kepesantrenan Aswaja</h2>
+                        <p class="text-gray-600 leading-relaxed">
+                            Kurikulum MTs Hasyim Asy'ari Tunjungmuli memadukan kurikulum standar dari Kementerian Agama dan Kementerian Pendidikan, dengan penguatan materi keagamaan khas pesantren salaf. Pendekatan ini dirancang untuk mencetak lulusan yang tidak hanya cerdas secara akademik, namun juga memiliki kedalaman spiritual dan akhlak mulia berlandaskan ajaran Ahlussunnah wal Jama'ah.
+                        </p>
+                    </div>
+                    <div class="w-full md:w-7/12 bg-white rounded-2xl p-8 shadow-sm border border-gray-100">
+                        <h3 class="text-2xl font-bold text-center text-deep-forest mb-8 border-b pb-4">Mata Pelajaran</h3>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-8">
+                            <div>
+                                <h4 class="font-bold text-gray-800 mb-3 border-b-2 border-fresh-green inline-block pb-1">Keagamaan</h4>
+                                <ul class="list-disc list-inside text-sm text-gray-600 space-y-2">
+                                    <li>Al-Qur'an Hadits</li>
+                                    <li>Akidah Akhlak</li>
+                                    <li>Fikih</li>
+                                    <li>Sejarah Kebudayaan Islam</li>
+                                    <li>Bahasa Arab</li>
+                                    <li>Ke-NU-an</li>
+                                    <li>Kitab Kuning</li>
+                                </ul>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-gray-800 mb-3 border-b-2 border-fresh-green inline-block pb-1">Umum</h4>
+                                <ul class="list-disc list-inside text-sm text-gray-600 space-y-2">
+                                    <li>Pendidikan Pancasila & Kewarganegaraan</li>
+                                    <li>Bahasa Indonesia</li>
+                                    <li>Matematika</li>
+                                    <li>Ilmu Pengetahuan Alam (IPA)</li>
+                                    <li>Ilmu Pengetahuan Sosial (IPS)</li>
+                                    <li>Bahasa Inggris</li>
+                                </ul>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-gray-800 mb-3 border-b-2 border-fresh-green inline-block pb-1">Seni, Keterampilan & Kreativitas</h4>
+                                <ul class="list-disc list-inside text-sm text-gray-600 space-y-2">
+                                    <li>Seni Budaya & Keterampilan</li>
+                                    <li>Prakarya</li>
+                                </ul>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-gray-800 mb-3 border-b-2 border-fresh-green inline-block pb-1">Olahraga & Kesehatan</h4>
+                                <ul class="list-disc list-inside text-sm text-gray-600 space-y-2">
+                                    <li>Pendidikan Jasmani, Olahraga dan Kesehatan (PJOK)</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <hr class="border-gray-200 mb-16">
+
+                <!-- Fasilitas -->
+                <div class="text-center mb-12">
+                    <i class="fas fa-building text-3xl text-deep-forest mb-2"></i>
+                    <h2 class="text-4xl font-bold text-gray-800">Eksplorasi Fasilitas</h2>
+                </div>
+                
+                <div class="flex flex-col md:flex-row gap-8 mb-24">
+                    <div class="w-full md:w-1/3 flex flex-col gap-3">
+                        <button class="tab-btn active text-left p-5 bg-white border border-gray-200 rounded-xl hover:bg-gray-50 transition" onclick="switchFasilitas(this, 'mushola')">
+                            <h4 class="font-bold text-lg text-gray-800">Mushola</h4>
+                            <p class="text-sm text-gray-500">MTs Hasyim Asy'ari Tunjungmuli</p>
+                        </button>
+                        <button class="tab-btn text-left p-5 bg-white border border-gray-200 rounded-xl hover:bg-gray-50 transition" onclick="switchFasilitas(this, 'perpus')">
+                            <h4 class="font-bold text-lg text-gray-800">Perpustakaan</h4>
+                            <p class="text-sm text-gray-500">MTs Hasyim Asy'ari Tunjungmuli</p>
+                        </button>
+                        <button class="tab-btn text-left p-5 bg-white border border-gray-200 rounded-xl hover:bg-gray-50 transition" onclick="switchFasilitas(this, 'lab')">
+                            <h4 class="font-bold text-lg text-gray-800">Laboratorium Komputer</h4>
+                            <p class="text-sm text-gray-500">MTs Hasyim Asy'ari Tunjungmuli</p>
+                        </button>
+                        <button class="tab-btn text-left p-5 bg-white border border-gray-200 rounded-xl hover:bg-gray-50 transition" onclick="switchFasilitas(this, 'halaman')">
+                            <h4 class="font-bold text-lg text-gray-800">Halaman Luas</h4>
+                            <p class="text-sm text-gray-500">MTs Hasyim Asy'ari Tunjungmuli</p>
+                        </button>
+                    </div>
+                    
+                    <div class="w-full md:w-2/3 bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+                        <img id="fasilitas-img" src="assets/img/masjid.jpg" alt="Mushola" class="w-full h-80 object-cover rounded-xl mb-6 transition-opacity duration-300">
+                        <h3 id="fasilitas-title" class="text-2xl font-bold text-gray-800 mb-2">Mushola</h3>
+                        <p id="fasilitas-desc" class="text-gray-600">Pusat kegiatan spiritual siswa, digunakan untuk shalat berjamaah, tadarus Al-Qur'an, dan kajian kitab kuning rutin. Lingkungan yang nyaman untuk mendukung ibadah dengan khusyuk.</p>
+                    </div>
+                </div>
+
+                <hr class="border-gray-200 mb-16">
+
+                <!-- Ekstrakurikuler -->
+                <div class="text-center mb-12">
+                    <i class="fas fa-book-open text-3xl text-deep-forest mb-2"></i>
+                    <h2 class="text-4xl font-bold text-gray-800">Wadah Minat & Bakat (Ekstrakurikuler)</h2>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div class="bg-white p-8 rounded-xl border border-gray-200 shadow-sm card-hover">
+                        <i class="fas fa-quran text-4xl text-red-400 mb-4 bg-red-50 p-3 rounded-lg"></i>
+                        <h4 class="font-bold text-xl text-gray-800 mb-3">Tahfidzul Qur'an</h4>
+                        <p class="text-gray-600 text-sm leading-relaxed">Menghafal Al-Qur'an dengan setoran rutin makhraj tajwid yang dibimbing langsung hafizh bersertifikat.</p>
+                    </div>
+                    <div class="bg-white p-8 rounded-xl border border-gray-200 shadow-sm card-hover">
+                        <i class="fas fa-fist-raised text-4xl text-gray-600 mb-4 bg-gray-100 p-3 rounded-lg"></i>
+                        <h4 class="font-bold text-xl text-gray-800 mb-3">Pencak Silat Pagar Nusa</h4>
+                        <p class="text-gray-600 text-sm leading-relaxed">Melatih bela diri, kedisiplinan fisik dan mental khas pencak silat Nahdlatul Ulama yang penuh prestasi.</p>
+                    </div>
+                    <div class="bg-white p-8 rounded-xl border border-gray-200 shadow-sm card-hover">
+                        <i class="fas fa-drum text-4xl text-green-500 mb-4 bg-green-50 p-3 rounded-lg"></i>
+                        <h4 class="font-bold text-xl text-gray-800 mb-3">Rebana / Hadroh</h4>
+                        <p class="text-gray-600 text-sm leading-relaxed">Menyalurkan bakat seni musik Islami, melantunkan sholawat nabi dengan instrumen rebana yang dinamis.</p>
+                    </div>
+                    <div class="bg-white p-8 rounded-xl border border-gray-200 shadow-sm card-hover">
+                        <i class="fas fa-users-cog text-4xl text-blue-500 mb-4 bg-blue-50 p-3 rounded-lg"></i>
+                        <h4 class="font-bold text-xl text-gray-800 mb-3">OSIS</h4>
+                        <p class="text-gray-600 text-sm leading-relaxed">Organisasi siswa untuk melatih jiwa kepemimpinan, manajemen acara, dan public speaking sejak dini.</p>
+                    </div>
+                    <div class="bg-white p-8 rounded-xl border border-gray-200 shadow-sm card-hover">
+                        <i class="fas fa-drum-steelpan text-4xl text-yellow-500 mb-4 bg-yellow-50 p-3 rounded-lg"></i>
+                        <h4 class="font-bold text-xl text-gray-800 mb-3">Drumband</h4>
+                        <p class="text-gray-600 text-sm leading-relaxed">Melatih kekompakan tim, musikalitas, dan performa baris-berbaris untuk tampil di berbagai perayaan.</p>
+                    </div>
+                    <div class="bg-white p-8 rounded-xl border border-gray-200 shadow-sm card-hover">
+                        <i class="fas fa-campground text-4xl text-orange-500 mb-4 bg-orange-50 p-3 rounded-lg"></i>
+                        <h4 class="font-bold text-xl text-gray-800 mb-3">Pramuka</h4>
+                        <p class="text-gray-600 text-sm leading-relaxed">Membangun kemandirian, gotong royong, kecintaan alam, dan karakter Praja Muda Karana.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- ==================== HALAMAN 4: BERITA & PENGUMUMAN ==================== -->
+        <section id="berita" class="page-section">
+            <div class="bg-deep-forest py-16 text-center text-white relative">
+                <i class="fas fa-newspaper text-5xl mb-4 text-fresh-green opacity-80"></i>
+                <h1 class="text-4xl font-bold mb-2">Hub Berita & Informasi</h1>
+                <p class="text-gray-300 max-w-2xl mx-auto px-4">Dapatkan berita terkini, artikel edukatif, kemajuan riset, serta pengumuman penting MTs Hasyim Asy'ari Tunjungmuli.</p>
+            </div>
+
+            <div class="max-w-7xl mx-auto px-4 py-16">
+                <!-- Filter Tags -->
+                <div class="flex flex-wrap justify-center gap-3 mb-12" id="berita-filters">
+                    <button onclick="filterBerita('semua', this)" class="filter-btn px-6 py-2 rounded-full bg-deep-forest text-white border border-deep-forest text-sm font-medium hover:opacity-90 transition">Semua</button>
+                    <button onclick="filterBerita('kegiatan', this)" class="filter-btn px-6 py-2 rounded-full bg-white text-gray-600 border border-gray-300 text-sm font-medium hover:border-deep-forest hover:text-deep-forest transition">Kegiatan</button>
+                    <button onclick="filterBerita('prestasi', this)" class="filter-btn px-6 py-2 rounded-full bg-white text-gray-600 border border-gray-300 text-sm font-medium hover:border-deep-forest hover:text-deep-forest transition">Prestasi</button>
+                    <button onclick="filterBerita('akademik', this)" class="filter-btn px-6 py-2 rounded-full bg-white text-gray-600 border border-gray-300 text-sm font-medium hover:border-deep-forest hover:text-deep-forest transition">Akademik</button>
+                    <button onclick="filterBerita('pengumuman', this)" class="filter-btn px-6 py-2 rounded-full bg-white text-gray-600 border border-gray-300 text-sm font-medium hover:border-deep-forest hover:text-deep-forest transition">Pengumuman</button>
+                </div>
+
+                <!-- Berita Grid -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" id="berita-grid">
+                    <div data-category="prestasi" class="berita-item bg-white rounded-xl overflow-hidden shadow-sm card-hover cursor-pointer border border-gray-100 flex flex-col h-full" onclick="navigateTo('detail-berita')">
+                        <img src="https://images.unsplash.com/photo-1555597673-b21d5c935865?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="News Image" class="w-full h-52 object-cover">
+                        <div class="p-6 flex flex-col flex-grow">
+                            <div class="text-xs text-gray-500 mb-3 flex items-center gap-2"><i class="far fa-calendar-alt"></i> 18 Mei 2019</div>
+                            <h3 class="font-bold text-lg mb-3 line-clamp-2 leading-tight">Juara 2 Pencak Silat Putra & Putri Piala Bupati Purbalingga Tahun 2019</h3>
+                            <p class="text-gray-600 text-sm line-clamp-3 mb-4 flex-grow">MTs Hasyim Asy'ari berhasil menorehkan prestasi yang membanggakan dalam ajang Piala Bupati Purbalingga. Dalam kompetisi ini, para siswa...</p>
+                            <div class="text-deep-forest font-medium text-sm flex items-center gap-1 border-t pt-4 mt-auto">Baca Selengkapnya <i class="fas fa-arrow-right text-xs ml-auto"></i></div>
+                        </div>
+                    </div>
+                    <div data-category="prestasi" class="berita-item bg-white rounded-xl overflow-hidden shadow-sm card-hover cursor-pointer border border-gray-100 flex flex-col h-full" onclick="navigateTo('detail-berita')">
+                        <img src="assets/img/baca.jpeg" alt="News Image" class="w-full h-52 object-cover">
+                        <div class="p-6 flex flex-col flex-grow">
+                            <div class="text-xs text-gray-500 mb-3 flex items-center gap-2"><i class="far fa-calendar-alt"></i> 18 Mei 2018</div>
+                            <h3 class="font-bold text-lg mb-3 line-clamp-2 leading-tight">Juara 3 MTQ Putra Tingkat Kecamatan Tahun 2018</h3>
+                            <p class="text-gray-600 text-sm line-clamp-3 mb-4 flex-grow">MTs Hasyim Asy'ari berhasil meraih prestasi yang membanggakan dalam ajang Musabaqah Tilawatil Qur'an (MTQ) tingkat kecamatan...</p>
+                            <div class="text-deep-forest font-medium text-sm flex items-center gap-1 border-t pt-4 mt-auto">Baca Selengkapnya <i class="fas fa-arrow-right text-xs ml-auto"></i></div>
+                        </div>
+                    </div>
+                    <div data-category="prestasi" class="berita-item bg-white rounded-xl overflow-hidden shadow-sm card-hover cursor-pointer border border-gray-100 flex flex-col h-full" onclick="navigateTo('detail-berita')">
+                        <img src="assets/img/baca2.jpeg" alt="News Image" class="w-full h-52 object-cover">
+                        <div class="p-6 flex flex-col flex-grow">
+                            <div class="text-xs text-gray-500 mb-3 flex items-center gap-2"><i class="far fa-calendar-alt"></i> 18 Mei 2018</div>
+                            <h3 class="font-bold text-lg mb-3 line-clamp-2 leading-tight">Juara 2 Tartil Putra Tingkat Kecamatan Tahun 2018</h3>
+                            <p class="text-gray-600 text-sm line-clamp-3 mb-4 flex-grow">MTs Hasyim Asy'ari kembali menunjukkan prestasinya dalam bidang keagamaan dengan meraih penghargaan pada lomba tartil antar sekolah...</p>
+                            <div class="text-deep-forest font-medium text-sm flex items-center gap-1 border-t pt-4 mt-auto">Baca Selengkapnya <i class="fas fa-arrow-right text-xs ml-auto"></i></div>
+                        </div>
+                    </div>
+                     <div data-category="akademik" class="berita-item bg-white rounded-xl overflow-hidden shadow-sm card-hover cursor-pointer border border-gray-100 flex flex-col h-full" onclick="navigateTo('detail-berita')">
+                        <img src="assets/img/background2.jpg" alt="News Image" class="w-full h-52 object-cover">
+                        <div class="p-6 flex flex-col flex-grow">
+                            <div class="text-xs text-gray-500 mb-3 flex items-center gap-2"><i class="far fa-calendar-alt"></i> 31 Mei 2026</div>
+                            <h3 class="font-bold text-lg mb-3 line-clamp-2 leading-tight">Pelaksanaan Ujian Akhir Madrasah Berjalan Lancar</h3>
+                            <p class="text-gray-600 text-sm line-clamp-3 mb-4 flex-grow">Siswa kelas IX MTs Hasyim Asy'ari telah menyelesaikan seluruh rangkaian ujian akhir madrasah dengan tertib dan mematuhi protokol kesehatan yang ketat.</p>
+                            <div class="text-deep-forest font-medium text-sm flex items-center gap-1 border-t pt-4 mt-auto">Baca Selengkapnya <i class="fas fa-arrow-right text-xs ml-auto"></i></div>
+                        </div>
+                    </div>
+                    <div data-category="kegiatan" class="berita-item bg-white rounded-xl overflow-hidden shadow-sm card-hover cursor-pointer border border-gray-100 flex flex-col h-full" onclick="navigateTo('detail-berita')">
+                        <img src="https://images.unsplash.com/photo-1511649475669-e288648b2339?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="News Image" class="w-full h-52 object-cover">
+                        <div class="p-6 flex flex-col flex-grow">
+                            <div class="text-xs text-gray-500 mb-3 flex items-center gap-2"><i class="far fa-calendar-alt"></i> 31 Mei 2026</div>
+                            <h3 class="font-bold text-lg mb-3 line-clamp-2 leading-tight">Peringatan Hari Santri Nasional dengan Apel Akbar</h3>
+                            <p class="text-gray-600 text-sm line-clamp-3 mb-4 flex-grow">Seluruh elemen madrasah beserta yayasan menggelar apel akbar menggunakan sarung dan peci sebagai bentuk penghormatan perjuangan ulama.</p>
+                            <div class="text-deep-forest font-medium text-sm flex items-center gap-1 border-t pt-4 mt-auto">Baca Selengkapnya <i class="fas fa-arrow-right text-xs ml-auto"></i></div>
+                        </div>
+                    </div>
+                    <div data-category="pengumuman" class="berita-item bg-white rounded-xl overflow-hidden shadow-sm card-hover cursor-pointer border border-gray-100 flex flex-col h-full" onclick="navigateTo('detail-berita')">
+                        <img src="https://images.unsplash.com/photo-1427504494785-3a9ca7044f45?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="News Image" class="w-full h-52 object-cover">
+                        <div class="p-6 flex flex-col flex-grow">
+                            <div class="text-xs text-gray-500 mb-3 flex items-center gap-2"><i class="far fa-calendar-alt"></i> 31 Mei 2026</div>
+                            <h3 class="font-bold text-lg mb-3 line-clamp-2 leading-tight">Sosialisasi Kurikulum Merdeka Terintegrasi</h3>
+                            <p class="text-gray-600 text-sm line-clamp-3 mb-4 flex-grow">Para dewan guru mengikuti workshop intensif untuk memantapkan penerapan Kurikulum Merdeka yang disesuaikan dengan nilai keislaman pesantren.</p>
+                            <div class="text-deep-forest font-medium text-sm flex items-center gap-1 border-t pt-4 mt-auto">Baca Selengkapnya <i class="fas fa-arrow-right text-xs ml-auto"></i></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- ==================== HALAMAN 5: DETAIL BERITA ==================== -->
+        <section id="detail-berita" class="page-section">
+            <div class="bg-deep-forest py-12 text-center text-white relative">
+                <h1 class="text-3xl font-bold mb-2">Hub Berita & Informasi</h1>
+                <p class="text-gray-300 text-sm">Dapatkan berita terkini, artikel edukatif, kemajuan riset, serta pengumuman penting.</p>
+            </div>
+
+            <div class="max-w-7xl mx-auto px-4 py-12">
+                <button onclick="navigateTo('berita')" class="mb-8 px-5 py-2.5 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 hover:text-deep-forest transition flex items-center gap-2 font-medium bg-white shadow-sm">
+                    <i class="fas fa-arrow-left"></i> Kembali ke Berita
+                </button>
+
+                <div class="flex flex-col lg:flex-row gap-10">
+                    <div class="w-full lg:w-2/3 bg-white p-8 md:p-10 rounded-2xl shadow-sm border border-gray-100">
+                        <img src="https://images.unsplash.com/photo-1555597673-b21d5c935865?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80" alt="Gambar Berita Utama" class="w-full h-[400px] object-cover rounded-xl mb-8">
+                        
+                        <div class="text-sm text-gray-500 mb-4 flex items-center gap-2">
+                            <i class="far fa-calendar-alt text-fresh-green"></i> 18 Mei 2019
+                        </div>
+                        
+                        <h2 class="text-3xl md:text-4xl font-bold text-gray-800 mb-8 leading-tight">Juara 2 Pencak Silat Putra & Putri Piala Bupati Purbalingga Tahun 2019</h2>
+                        
+                        <div class="prose max-w-none text-gray-700 leading-loose space-y-6 text-justify">
+                            <p>MTs Hasyim Asy'ari berhasil menorehkan prestasi yang membanggakan dalam ajang Piala Bupati Purbalingga. Dalam kompetisi tersebut, para siswa yang mewakili sekolah pada cabang olahraga pencak silat menunjukkan kemampuan, kedisiplinan, dan semangat juang yang tinggi sehingga mampu bersaing dengan peserta dari berbagai sekolah lainnya.</p>
+                            <p>Prestasi yang diraih adalah Juara 2 Pencak Silat Putra dan Putri. Keberhasilan ini menunjukkan bahwa MTs Hasyim Asy'ari tidak hanya berfokus pada pencapaian akademik, tetapi juga mendukung pengembangan bakat dan keterampilan siswa di bidang olahraga serta seni bela diri tradisional Indonesia. Hasil tersebut menjadi bukti bahwa latihan yang dilakukan secara rutin dan pembinaan yang baik dapat menghasilkan prestasi yang membanggakan.</p>
+                            <p>Pencapaian ini memberikan kebanggaan bagi seluruh warga sekolah, mulai dari siswa, guru, pelatih, hingga orang tua. Selain mengharumkan nama MTs Hasyim Asy'ari di tingkat daerah, prestasi tersebut juga menjadi motivasi bagi siswa lainnya untuk terus berlatih, berprestasi, dan mengembangkan potensi diri di berbagai bidang. Dengan semangat yang sama, diharapkan sekolah dapat meraih prestasi yang lebih tinggi pada kompetisi-kompetisi berikutnya.</p>
+                        </div>
+
+                        <div class="mt-10 pt-6 border-t border-gray-100 flex items-center justify-between">
+                            <button class="flex items-center gap-2 text-gray-500 hover:text-red-500 transition px-4 py-2 rounded-full border border-gray-200">
+                                <i class="far fa-heart"></i> Suka
+                            </button>
+                            <div class="flex gap-3">
+                                <span class="text-gray-400 text-sm self-center">Bagikan:</span>
+                                <button class="w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center hover:bg-blue-600 hover:text-white transition"><i class="fab fa-facebook-f"></i></button>
+                                <button class="w-8 h-8 rounded-full bg-green-100 text-green-600 flex items-center justify-center hover:bg-green-600 hover:text-white transition"><i class="fab fa-whatsapp"></i></button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="w-full lg:w-1/3">
+                        <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 sticky top-28">
+                            <h3 class="font-bold text-lg text-gray-800 mb-6 border-b pb-3">Rekomendasi Terkait</h3>
+                            <div class="space-y-6">
+                                <div class="flex gap-4 group cursor-pointer" onclick="window.scrollTo(0,0)">
+                                    <img src="assets/img/background2.jpg" alt="Thumb" class="w-20 h-20 rounded-lg object-cover">
+                                    <div>
+                                        <h4 class="font-semibold text-gray-800 text-sm group-hover:text-fresh-green transition line-clamp-2 mb-1">Pelaksanaan Ujian Akhir Madrasah Berjalan Lancar</h4>
+                                        <p class="text-xs text-gray-500">31 Mei 2026</p>
+                                    </div>
+                                </div>
+                                <div class="flex gap-4 group cursor-pointer" onclick="window.scrollTo(0,0)">
+                                    <img src="https://images.unsplash.com/photo-1511649475669-e288648b2339?ixlib=rb-4.0.3&auto=format&fit=crop&w=200&q=80" alt="Thumb" class="w-20 h-20 rounded-lg object-cover">
+                                    <div>
+                                        <h4 class="font-semibold text-gray-800 text-sm group-hover:text-fresh-green transition line-clamp-2 mb-1">Peringatan Hari Santri Nasional dengan Apel Akbar</h4>
+                                        <p class="text-xs text-gray-500">31 Mei 2026</p>
+                                    </div>
+                                </div>
+                                <div class="flex gap-4 group cursor-pointer" onclick="window.scrollTo(0,0)">
+                                    <img src="assets/img/baca2.jpeg" alt="Thumb" class="w-20 h-20 rounded-lg object-cover">
+                                    <div>
+                                        <h4 class="font-semibold text-gray-800 text-sm group-hover:text-fresh-green transition line-clamp-2 mb-1">Juara 3 MTQ Putra Tingkat Kecamatan 2018</h4>
+                                        <p class="text-xs text-gray-500">18 Mei 2018</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- ==================== HALAMAN 6: GALERI ==================== -->
+        <section id="galeri" class="page-section">
+            <div class="bg-deep-forest py-16 text-center text-white relative">
+                <i class="fas fa-image text-5xl mb-4 text-fresh-green opacity-80"></i>
+                <h1 class="text-4xl font-bold mb-2">Galeri Dokumentasi</h1>
+                <p class="text-gray-300 max-w-2xl mx-auto px-4">Merekam rekam jejak keceriaan kegiatan belajar, lingkungan asri, serta goresan prestasi di lingkungan MTs Hasyim Asy'ari Tunjungmuli.</p>
+            </div>
+
+            <div class="max-w-7xl mx-auto px-4 py-16">
+                <!-- Filter -->
+                <div class="flex flex-wrap justify-center gap-3 mb-12" id="galeri-filters">
+                    <button onclick="filterGaleri('semua', this)" class="filter-btn px-6 py-2 rounded-full bg-deep-forest text-white border border-deep-forest text-sm font-medium hover:opacity-90 transition">Semua</button>
+                    <button onclick="filterGaleri('kegiatan', this)" class="filter-btn px-6 py-2 rounded-full bg-white text-gray-600 border border-gray-300 text-sm font-medium hover:border-deep-forest hover:text-deep-forest transition">Kegiatan</button>
+                    <button onclick="filterGaleri('prestasi', this)" class="filter-btn px-6 py-2 rounded-full bg-white text-gray-600 border border-gray-300 text-sm font-medium hover:border-deep-forest hover:text-deep-forest transition">Prestasi</button>
+                    <button onclick="filterGaleri('fasilitas', this)" class="filter-btn px-6 py-2 rounded-full bg-white text-gray-600 border border-gray-300 text-sm font-medium hover:border-deep-forest hover:text-deep-forest transition">Fasilitas</button>
+                    <button onclick="filterGaleri('keagamaan', this)" class="filter-btn px-6 py-2 rounded-full bg-white text-gray-600 border border-gray-300 text-sm font-medium hover:border-deep-forest hover:text-deep-forest transition">Keagamaan</button>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8" id="galeri-grid">
+                    <div data-category="fasilitas" class="galeri-item bg-white rounded-xl p-4 shadow-sm border border-gray-100 card-hover group cursor-pointer" onclick="openGalleryModal('https://images.unsplash.com/photo-1541339907198-e08756dedf3f?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80', 'Lingkungan Asri', 'Pemandangan sejuk di sekitar area madrasah.')">
+                        <div class="overflow-hidden rounded-lg mb-4">
+                            <img src="https://images.unsplash.com/photo-1541339907198-e08756dedf3f?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Galeri" class="w-full h-56 object-cover group-hover:scale-110 transition duration-500">
+                        </div>
+                        <h3 class="font-bold text-lg text-gray-800 mb-1">Lingkungan Asri</h3>
+                        <p class="text-sm text-gray-500">Pemandangan sejuk di sekitar area madrasah.</p>
+                        <div class="mt-3 text-fresh-green text-sm flex items-center opacity-0 group-hover:opacity-100 transition duration-300"><i class="fas fa-search-plus mr-2"></i> Perbesar Gambar</div>
+                    </div>
+                    <div data-category="prestasi" class="galeri-item bg-white rounded-xl p-4 shadow-sm border border-gray-100 card-hover group cursor-pointer" onclick="openGalleryModal('https://images.unsplash.com/photo-1555597673-b21d5c935865?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80', 'Juara Lomba Pencak Silat', 'Atlet silat Pagar Nusa menunjukkan piala kemenangan.')">
+                        <div class="overflow-hidden rounded-lg mb-4">
+                            <img src="https://images.unsplash.com/photo-1555597673-b21d5c935865?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Galeri" class="w-full h-56 object-cover group-hover:scale-110 transition duration-500">
+                        </div>
+                        <h3 class="font-bold text-lg text-gray-800 mb-1">Juara Lomba Pencak Silat</h3>
+                        <p class="text-sm text-gray-500">Atlet silat Pagar Nusa menunjukkan piala kemenangan.</p>
+                        <div class="mt-3 text-fresh-green text-sm flex items-center opacity-0 group-hover:opacity-100 transition duration-300"><i class="fas fa-search-plus mr-2"></i> Perbesar Gambar</div>
+                    </div>
+                    <div data-category="keagamaan" class="galeri-item bg-white rounded-xl p-4 shadow-sm border border-gray-100 card-hover group cursor-pointer" onclick="openGalleryModal('assets/img/background2.jpg', 'Istighosah Bersama', 'Kegiatan doa bersama menjelang ujian nasional.')">
+                        <div class="overflow-hidden rounded-lg mb-4">
+                            <img src="assets/img/background2.jpg" alt="Galeri" class="w-full h-56 object-cover group-hover:scale-110 transition duration-500">
+                        </div>
+                        <h3 class="font-bold text-lg text-gray-800 mb-1">Istighosah Bersama</h3>
+                        <p class="text-sm text-gray-500">Kegiatan doa bersama menjelang ujian nasional.</p>
+                        <div class="mt-3 text-fresh-green text-sm flex items-center opacity-0 group-hover:opacity-100 transition duration-300"><i class="fas fa-search-plus mr-2"></i> Perbesar Gambar</div>
+                    </div>
+                    <div data-category="keagamaan" class="galeri-item bg-white rounded-xl p-4 shadow-sm border border-gray-100 card-hover group cursor-pointer" onclick="openGalleryModal('https://images.unsplash.com/photo-1564769625905-50e93615e769?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80', 'Kegiatan di Mushola', 'Siswa melangsungkan shalat Dhuha berjamaah rutin.')">
+                        <div class="overflow-hidden rounded-lg mb-4">
+                            <img src="https://images.unsplash.com/photo-1564769625905-50e93615e769?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Galeri" class="w-full h-56 object-cover group-hover:scale-110 transition duration-500">
+                        </div>
+                        <h3 class="font-bold text-lg text-gray-800 mb-1">Kegiatan di Mushola</h3>
+                        <p class="text-sm text-gray-500">Siswa melangsungkan shalat Dhuha berjamaah rutin.</p>
+                        <div class="mt-3 text-fresh-green text-sm flex items-center opacity-0 group-hover:opacity-100 transition duration-300"><i class="fas fa-search-plus mr-2"></i> Perbesar Gambar</div>
+                    </div>
+                    <div data-category="kegiatan" class="galeri-item bg-white rounded-xl p-4 shadow-sm border border-gray-100 card-hover group cursor-pointer" onclick="openGalleryModal('assets/img/hlmn.jpg', 'Kerja Bakti Jumat Bersih', 'Menjaga kebersihan dan kekompakan siswa.')">
+                        <div class="overflow-hidden rounded-lg mb-4">
+                            <img src="assets/img/hlmn.jpg" alt="Galeri" class="w-full h-56 object-cover group-hover:scale-110 transition duration-500">
+                        </div>
+                        <h3 class="font-bold text-lg text-gray-800 mb-1">Kerja Bakti Jumat Bersih</h3>
+                        <p class="text-sm text-gray-500">Menjaga kebersihan dan kekompakan siswa.</p>
+                        <div class="mt-3 text-fresh-green text-sm flex items-center opacity-0 group-hover:opacity-100 transition duration-300"><i class="fas fa-search-plus mr-2"></i> Perbesar Gambar</div>
+                    </div>
+                    <div data-category="kegiatan" class="galeri-item bg-white rounded-xl p-4 shadow-sm border border-gray-100 card-hover group cursor-pointer" onclick="openGalleryModal('assets/img/baca2.jpeg', 'Rutinan Tadarus Al-Qur\'an', 'Pembiasaan membaca Al-Qur\'an sebelum jam pelajaran.')">
+                        <div class="overflow-hidden rounded-lg mb-4">
+                            <img src="assets/img/baca2.jpeg" alt="Galeri" class="w-full h-56 object-cover group-hover:scale-110 transition duration-500">
+                        </div>
+                        <h3 class="font-bold text-lg text-gray-800 mb-1">Rutinan Tadarus Al-Qur'an</h3>
+                        <p class="text-sm text-gray-500">Pembiasaan membaca Al-Qur'an sebelum jam pelajaran.</p>
+                        <div class="mt-3 text-fresh-green text-sm flex items-center opacity-0 group-hover:opacity-100 transition duration-300"><i class="fas fa-search-plus mr-2"></i> Perbesar Gambar</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- ==================== HALAMAN 7: PPDB ==================== -->
+        <section id="ppdb" class="page-section">
+            <div class="bg-deep-forest py-16 text-center text-white relative">
+                <i class="fas fa-user-plus text-5xl mb-4 text-fresh-green opacity-80"></i>
+                <h1 class="text-4xl font-bold mb-2">Pendaftaran PPDB</h1>
+                <p class="text-gray-300 max-w-2xl mx-auto px-4">Tahun Ajaran 2026/2027. Proses mandiri terkomputerisasi, cepat, transparan, dan dapat dipantau dari rumah.</p>
+            </div>
+
+            <div class="max-w-6xl mx-auto px-4 py-16">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-10 mb-10">
+                    <div>
+                        <h3 class="text-2xl font-bold text-gray-800 mb-6 italic">Assalamu'alaikum Wr. Wb.</h3>
+                        <p class="text-gray-600 text-lg leading-relaxed mb-6">
+                            Dengan semakin dekatnya tahun pelajaran baru, Madrasah Tsanawiyah Hasyim Asy'ari Tunjungmuli membuka pendaftaran peserta didik baru untuk tahun pelajaran 2026/2027. Pendaftaran Peserta Didik Baru tahap pertama dilaksanakan tanggal 22 April - 31 Mei 2026. Pendaftaran tahap kedua dilaksanakan tanggal 03 Juni s/d 12 Juli 2026.
+                        </p>
+                    </div>
+
+                    <div class="bg-green-50 border-2 border-fresh-green rounded-2xl p-8 relative">
+                        <div class="absolute -top-5 left-8 bg-fresh-green text-white px-6 py-2 rounded-full font-bold shadow-md">Syarat Pendaftaran</div>
+                        <ol class="list-decimal list-inside space-y-4 text-gray-700 mt-4 leading-relaxed">
+                            <li>Peserta didik mengikuti Ujian Sekolah / Ujian Madrasah pada waktu yang telah ditentukan dan nantinya dinyatakan lulus dari SD/MI.</li>
+                            <li>Khusus untuk calon peserta didik yang pindah masuk, maka harus menyertakan Surat Pindah dan Raport dari Sekolah / Madrasah sebelumnya.</li>
+                            <li>Mengisi formulir online atau offline (pilih salah satu) dan melengkapi lampiran formulir yang diperlukan.</li>
+                            <li>Berkelakuan baik dan bersedia mengikuti Peraturan dan Tata Tertib di MTs Hasyim Asy'ari Tunjungmuli.</li>
+                        </ol>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-10 mb-16">
+                    <div class="bg-white border border-gray-200 rounded-2xl p-8 shadow-sm relative">
+                        <div class="inline-flex items-center gap-2 bg-deep-forest text-white px-5 py-2 rounded-full font-bold mb-6 text-sm">
+                            <i class="far fa-file-alt"></i> Pendaftaran offline
+                        </div>
+                        <p class="text-gray-600 mb-4 text-sm leading-relaxed">Penerimaan Peserta Didik Baru (PPDB) secara offline, maka formulir pendaftaran dapat diambil langsung di sekretariat PPDB MTs Hasyim Asy'ari Tunjungmuli pada hari dan jam kerja, atau bisa juga diambil di rumah Guru dan Karyawan MTs Hasyim Asy'ari Tunjungmuli terdekat.</p>
+                        <p class="text-gray-600 mb-4 text-sm leading-relaxed">Formulir offline yang sudah diisi diserahkan langsung ke Sekretariat PPDB MTs Hasyim Asy'ari Tunjungmuli pada hari dan jam kerja dengan dilampiri :</p>
+                        <ol class="list-decimal list-inside space-y-2 text-gray-700 text-sm font-medium ml-2">
+                            <li>Fotokopi Kartu Keluarga (KK)</li>
+                            <li>Fotokopi Akta Kelahiran</li>
+                            <li>Fotokopi KTP Ayah dan Ibu</li>
+                            <li>Foto Calon Peserta Didik 3 × 4 (Jika Ada)</li>
+                            <li>Fotokopi KKS/KPS/KIP (Jika Ada)</li>
+                            <li>Surat Hasil Ujian Sementara (Jika Sudah Ada)</li>
+                        </ol>
+                    </div>
+
+                    <div class="bg-white border border-gray-200 rounded-2xl p-8 shadow-sm relative">
+                        <div class="inline-flex items-center gap-2 bg-fresh-green text-white px-5 py-2 rounded-full font-bold mb-6 text-sm">
+                            <i class="fas fa-wifi"></i> Pendaftaran online
+                        </div>
+                        <p class="text-gray-600 mb-6 text-sm leading-relaxed">Pendaftaran bisa dilakukan secara online melalui formulir di bawah ini :</p>
+                        <a href="https://docs.google.com/forms/d/e/1FAIpQLSfW9NuQG-nxLA6r8yTtDbarEK78jONfmzMog9zjQp6naa9cxA/viewform" target="_blank" class="block bg-green-100 text-deep-forest font-bold text-center py-4 rounded-xl border border-green-300 hover:bg-green-200 transition mb-6 underline">Formulir Penerimaan Peserta Didik Baru (PPDB) Online.</a>
+                        <p class="text-gray-600 text-sm leading-relaxed">Lampiran formulir (Fotokopi KK, Akta Kelahiran, KTP Ayah-Ibu, SKHU SD/MI, dan Ijazah SD/MI) bisa dikirimkan langsung ke sekretariat PPDB MTs Hasyim Asy'ari Tunjungmuli saat sudah mulai proses pembelajaran. Lampiran formulir juga bisa dikirimkan melalui Whatsapp ke panitia PPDB dalam bentuk file foto yang jelas dan terbaca.</p>
+                    </div>
+                </div>
+
+                <div class="bg-deep-forest rounded-2xl p-10 text-center text-white mb-16 shadow-lg relative overflow-hidden">
+                    <i class="fas fa-university text-6xl text-white/10 absolute -right-4 -bottom-4"></i>
+                    <i class="fas fa-landmark text-4xl mb-4 text-fresh-green"></i>
+                    <h2 class="text-3xl font-bold mb-4">Daftar Calon Siswa Terdaftar Sementara</h2>
+                    <a href="https://docs.google.com/spreadsheets/d/1ST1Iy0cAc6yX5CzVKE9amhDxK-oFcutrBsD0TLoVptg/edit?usp=sharing" target="_blank" class="text-fresh-green font-bold text-lg underline hover:text-white transition">Daftar Calon Peserta Didik Baru yang sudah mendaftar secara online.</a>
+                    <p class="text-gray-300 text-sm mt-3">(Beberapa informasi sengaja disembunyikan, hanya nama dan tempat tanggal lahir yang ditampilkan).</p>
+                </div>
+
+                <div class="bg-white rounded-2xl p-8 shadow-sm border border-gray-100 max-w-2xl">
+                    <h3 class="font-bold text-xl text-deep-forest mb-4 border-b pb-2">Kontak Panitia</h3>
+                    <p class="text-gray-600 mb-4">Untuk informasi lebih lanjut anda bisa menghubungi Panitia PPDB MTs Hasyim Asy'ari Tunjungmuli tahun pelajaran 2023/2024 :</p>
+                    <ul class="space-y-3 text-gray-800 font-medium ml-4">
+                        <li>1. Fauzan Fahmi (085329841033)</li>
+                        <li>2. Sri Nurhayati (088232529652)</li>
+                        <li>3. Lulu Krisniasiwi P. (081384588868)</li>
+                        <li>4. Yunia Nur Istiqomah (085722734106)</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- ==================== HALAMAN 8: KONTAK ==================== -->
+        <section id="kontak" class="page-section">
+            <div class="bg-deep-forest py-16 text-center text-white relative">
+                <i class="far fa-comments text-5xl mb-4 text-fresh-green opacity-80"></i>
+                <h1 class="text-4xl font-bold mb-2">Hubungi & Layanan Pengaduan</h1>
+                <p class="text-gray-300 max-w-2xl mx-auto px-4">Kami siap melayani kebutuhan informasi pendaftaran, pengaduan wali murid, serta kemitraan sinergis lembaga.</p>
+            </div>
+
+            <div class="max-w-7xl mx-auto px-4 py-16">
+                <div class="flex flex-col lg:flex-row gap-12 items-start">
+                    <div class="w-full lg:w-1/2 flex flex-col gap-4">
+                        <div class="bg-white p-5 rounded-2xl border border-gray-200 shadow-sm flex items-start gap-5">
+                            <div class="w-12 h-12 bg-green-50 rounded-full flex items-center justify-center text-fresh-green text-xl flex-shrink-0">
+                                <i class="fas fa-map-marker-alt"></i>
+                            </div>
+                            <div>
+                                <p class="text-xs text-gray-500 font-bold tracking-wider mb-1">LOKASI SEKOLAH</p>
+                                <p class="text-gray-800 font-medium">Jl. Raya Tunjungmuli, Kec. Karangmoncol, Kabupaten Purbalingga, Jawa Tengah 53355</p>
+                            </div>
+                        </div>
+                        <div class="bg-white p-5 rounded-2xl border border-gray-200 shadow-sm flex items-start gap-5">
+                            <div class="w-12 h-12 bg-green-50 rounded-full flex items-center justify-center text-fresh-green text-xl flex-shrink-0">
+                                <i class="fas fa-phone-alt"></i>
+                            </div>
+                            <div>
+                                <p class="text-xs text-gray-500 font-bold tracking-wider mb-1">SALURAN TELEPHON / WA</p>
+                                <p class="text-gray-800 font-bold text-lg">+ 62 811 261 9026</p>
+                            </div>
+                        </div>
+                        <div class="bg-white p-5 rounded-2xl border border-gray-200 shadow-sm flex items-start gap-5">
+                            <div class="w-12 h-12 bg-green-50 rounded-full flex items-center justify-center text-fresh-green text-xl flex-shrink-0">
+                                <i class="far fa-envelope"></i>
+                            </div>
+                            <div>
+                                <p class="text-xs text-gray-500 font-bold tracking-wider mb-1">SURAT ELEKTRONIK (EMAIL)</p>
+                                <p class="text-gray-800 font-medium">mtsha83@gmail.com<br>& mts.hasyimasyari@yahoo.co.id</p>
+                            </div>
+                        </div>
+                        <div class="bg-white p-5 rounded-2xl border border-gray-200 shadow-sm flex items-start gap-5">
+                            <div class="w-12 h-12 bg-green-50 rounded-full flex items-center justify-center text-fresh-green text-xl flex-shrink-0">
+                                <i class="far fa-clock"></i>
+                            </div>
+                            <div>
+                                <p class="text-xs text-gray-500 font-bold tracking-wider mb-1">JAM LAYANAN KANTOR</p>
+                                <p class="text-gray-800 font-medium">Senin - Sabtu: Pukul 07.30 - 13.00 WIB</p>
+                            </div>
+                        </div>
+                        <div class="bg-white p-3 rounded-2xl border border-gray-200 shadow-sm mt-2">
+                            <p class="text-xs text-gray-500 font-bold tracking-wider mb-3 ml-2">GEOLOKASI TERVERIFIKASI MAP</p>
+                            <img src="assets/img/Screenshot from 2026-06-12 22-13-15.png" alt="Map Location" class="w-full h-48 object-cover rounded-xl filter contrast-75 sepia-[.2]">
+                        </div>
+                    </div>
+
+                    <div class="w-full lg:w-1/2">
+                        <div class="bg-white rounded-2xl shadow-md border border-gray-200 overflow-hidden">
+                            <div class="bg-deep-forest text-white p-6">
+                                <h3 class="text-2xl font-bold">Hubungi Layanan</h3>
+                            </div>
+                            <div class="p-8">
+                                <p class="text-sm text-gray-600 font-semibold mb-3">Pratinjau Saluran WhatsApp</p>
+                                <textarea class="w-full h-48 p-4 border border-gray-300 rounded-xl bg-gray-50 font-mono text-sm text-gray-700 focus:outline-none focus:border-fresh-green focus:ring-1 focus:ring-fresh-green resize-none mb-6">Assalamu'alaikum Admin MTs Hasyim Asy'ari, saya *[Nama Anda]* ([No WA]) ingin bertanya perihal *Tanya Pendaftaran PPDB*:
+
+"[Tulis Pertanyaan Anda]"</textarea>
+                                
+                                <a href="https://share.google/2vxFyxNmwAfTMbOEB" target="_blank" rel="noopener noreferrer"><button class="w-full bg-fresh-green text-white font-bold py-4 rounded-xl flex justify-center items-center gap-3 btn-interactive shadow-lg hover:bg-green-600 transition">
+                                    Kirim Otomatis ke WhatsApp Admin <i class="fab fa-whatsapp text-xl"></i>
+                                </button></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- GALLERY MODAL OVERLAY -->
+    <div id="gallery-modal" class="fixed inset-0 z-[100] bg-black/90 hidden items-center justify-center opacity-0 flex-col p-4" onclick="if(event.target === this) closeGalleryModal()">
+        <button onclick="closeGalleryModal()" class="absolute top-4 right-4 md:top-8 md:right-8 text-gray-400 hover:text-white text-4xl focus:outline-none transition-colors duration-200">
+            <i class="fas fa-times"></i>
+        </button>
+        <div class="relative max-w-5xl w-full flex flex-col items-center pointer-events-none">
+            <img id="modal-img" src="" alt="Detail Galeri" class="max-w-full max-h-[75vh] object-contain rounded-lg shadow-2xl mb-6 pointer-events-auto">
+            <div class="bg-black/50 backdrop-blur-sm p-4 md:p-6 rounded-xl border border-white/10 w-full md:w-auto text-center pointer-events-auto">
+                <h3 id="modal-title" class="text-white font-bold text-2xl md:text-3xl mb-2"></h3>
+                <p id="modal-desc" class="text-gray-300 text-sm md:text-base max-w-2xl mx-auto"></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- FOOTER (Shared) -->
+    <footer class="bg-deep-forest text-gray-300 pt-16 pb-8 border-t-[8px] border-fresh-green">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 mb-12">
+                <div>
+                    <div class="flex items-center mb-6">
+                        <div class="w-10 h-10 bg-white text-deep-forest rounded-full flex items-center justify-center font-bold text-xl mr-3">
+                            <img src="assets/img/Logo MTsHA 2021 Col Trans.png" alt="Logo MTs Hasyim Asy'ari">
+                        </div>
+                        <div>
+                            <h2 class="font-bold text-lg leading-tight text-white">MTs Hasyim Asy'ari</h2>
+                            <p class="text-xs text-fresh-green tracking-widest uppercase">Tunjungmuli</p>
+                        </div>
+                    </div>
+                    <p class="text-sm leading-relaxed opacity-90">Lembaga pendidikan tingkat menengah pertama berbasis nilai-nilai keislaman Ahlussunnah wal Jama'ah yang unggul dalam ilmu pengetahuan dan berjiwa kepemimpinan.</p>
+                </div>
+                <div>
+                    <h4 class="text-white font-semibold mb-6 uppercase text-sm tracking-wider">Navigasi Cepat</h4>
+                    <ul class="space-y-3 text-sm opacity-90">
+                        <li><button onclick="navigateTo('beranda')" class="hover:text-fresh-green transition hover:translate-x-1 inline-block">Beranda Utama</button></li>
+                        <li><button onclick="navigateTo('tentang')" class="hover:text-fresh-green transition hover:translate-x-1 inline-block">Profil Sekolah</button></li>
+                        <li><button onclick="navigateTo('akademik')" class="hover:text-fresh-green transition hover:translate-x-1 inline-block">Akademik</button></li>
+                        <li><button onclick="navigateTo('ppdb')" class="hover:text-fresh-green transition hover:translate-x-1 inline-block">Informasi PPDB</button></li>
+                        <li><button onclick="navigateTo('berita')" class="hover:text-fresh-green transition hover:translate-x-1 inline-block">Berita & Pengumuman</button></li>
+                        <li><button onclick="navigateTo('galeri')" class="hover:text-fresh-green transition hover:translate-x-1 inline-block">Eksplorasi Galeri</button></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-white font-semibold mb-6 uppercase text-sm tracking-wider">Program Unggulan</h4>
+                    <ul class="space-y-3 text-sm opacity-90">
+                        <li class="flex items-center gap-2"><i class="far fa-check-circle text-fresh-green"></i> Tahfidzul Al-Qur'an</li>
+                        <li class="flex items-center gap-2"><i class="far fa-check-circle text-fresh-green"></i> Pagar Nusa & Pramuka</li>
+                        <li class="flex items-center gap-2"><i class="far fa-check-circle text-fresh-green"></i> Rebana / Hadroh</li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-white font-semibold mb-6 uppercase text-sm tracking-wider">Hubungi Kami</h4>
+                    <ul class="space-y-4 text-sm opacity-90">
+                        <li class="flex items-start gap-3">
+                            <i class="fas fa-map-marker-alt text-fresh-green mt-1"></i>
+                            <span>Jalan Raya Tunjungmuli - Bobotsari Km. 01, Desa Tunjungmuli, Kec. Karangmoncol, Kab. Purbalingga, Jawa Tengah 53355.</span>
+                        </li>
+                        <li class="flex items-center gap-3">
+                            <i class="fas fa-phone-alt text-fresh-green"></i>
+                            <span>+ 62 811 261 9026</span>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <i class="far fa-envelope text-fresh-green mt-1"></i>
+                            <span>mtsha83@gmail.com<br>& mts.hasyimasyari@yahoo.co.id</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="pt-8 border-t border-white/10 flex flex-col md:flex-row justify-between items-center gap-4 text-sm opacity-80">
+                <p>&copy; 2026 MTs Hasyim Asy'ari Tunjungmuli. Hak Cipta Dilindungi.</p>
+                <div class="bg-white/10 px-4 py-2 rounded-full border border-white/20 flex items-center gap-2">
+                    <i class="fas fa-bookmark text-fresh-green"></i> Terakreditasi B
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- SCRIPT JAVASCRIPT -->
+    <script>
+        function navigateTo(pageId) {
+            const sections = document.querySelectorAll('.page-section');
+            sections.forEach(sec => {
+                sec.classList.remove('active');
+                setTimeout(() => {
+                    if(!sec.classList.contains('active')) {
+                        sec.style.display = 'none';
+                    }
+                }, 400); 
+            });
+
+            const targetSection = document.getElementById(pageId);
+            setTimeout(() => {
+                targetSection.style.display = 'block';
+                void targetSection.offsetWidth; 
+                targetSection.classList.add('active');
+            }, 50);
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+
+            const navLinks = document.querySelectorAll('.nav-link');
+            navLinks.forEach(link => {
+                if (link.getAttribute('onclick').includes(pageId)) {
+                    link.classList.add('active');
+                } else {
+                    link.classList.remove('active');
+                }
+            });
+        }
+
+        function toggleMobileMenu() {
+            const menu = document.getElementById('mobile-menu');
+            if (menu.classList.contains('hidden')) {
+                menu.classList.remove('hidden');
+            } else {
+                menu.classList.add('hidden');
+            }
+        }
+        document.getElementById('mobile-menu-btn').addEventListener('click', toggleMobileMenu);
+
+        const fasilitasData = {
+            'mushola': {
+                title: 'Mushola',
+                desc: 'Pusat kegiatan spiritual siswa, digunakan untuk shalat berjamaah, tadarus Al-Qur\'an, dan kajian kitab kuning rutin. Lingkungan yang nyaman untuk mendukung ibadah dengan khusyuk.',
+                img: 'assets/img/masjid.jpg'
+            },
+            'perpus': {
+                title: 'Perpustakaan Terpadu',
+                desc: 'Menyediakan koleksi buku lengkap, dari buku pelajaran kurikulum merdeka hingga kitab kuning literatur pesantren. Dilengkapi area baca yang tenang dan nyaman.',
+                img: 'https://images.unsplash.com/photo-1507842217343-583bb7270b66?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80'
+            },
+            'lab': {
+                title: 'Laboratorium Komputer',
+                desc: 'Membekali siswa dengan kecakapan digital masa kini. Perangkat komputer mutakhir dengan akses internet untuk menunjang pembelajaran TIK dan ujian berbasis komputer.',
+                img: 'https://images.unsplash.com/photo-1516321497487-e288fb19713f?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80'
+            },
+            'halaman': {
+                title: 'Halaman Luas (Lapangan)',
+                desc: 'Area multifungsi yang digunakan untuk upacara bendera, senam bersama, kegiatan olahraga, hingga ekstrakurikuler kepramukaan dan pencak silat.',
+                img: 'assets/img/hlmn.jpg'
+            }
+        };
+
+        function switchFasilitas(btnElement, key) {
+            const buttons = document.querySelectorAll('.tab-btn');
+            buttons.forEach(btn => btn.classList.remove('active'));
+            btnElement.classList.add('active');
+
+            const data = fasilitasData[key];
+            const imgEl = document.getElementById('fasilitas-img');
+            
+            imgEl.style.opacity = '0';
+            setTimeout(() => {
+                imgEl.src = data.img;
+                document.getElementById('fasilitas-title').innerText = data.title;
+                document.getElementById('fasilitas-desc').innerText = data.desc;
+                imgEl.style.opacity = '1';
+            }, 300);
+        }
+
+        window.onload = () => {
+            document.querySelector('.nav-link[onclick="navigateTo(\'beranda\')"]').classList.add('active');
+        };
+
+        function filterBerita(category, btnElement) {
+            const buttons = document.querySelectorAll('#berita-filters .filter-btn');
+            buttons.forEach(btn => {
+                btn.classList.remove('bg-deep-forest', 'text-white', 'border-deep-forest');
+                btn.classList.add('bg-white', 'text-gray-600', 'border-gray-300');
+            });
+            btnElement.classList.remove('bg-white', 'text-gray-600', 'border-gray-300');
+            btnElement.classList.add('bg-deep-forest', 'text-white', 'border-deep-forest');
+
+            const items = document.querySelectorAll('.berita-item');
+            items.forEach(item => {
+                if (category === 'semua' || item.dataset.category === category) {
+                    item.classList.remove('item-hidden');
+                    item.classList.add('item-visible');
+                } else {
+                    item.classList.add('item-hidden');
+                    item.classList.remove('item-visible');
+                }
+            });
+        }
+
+        function filterGaleri(category, btnElement) {
+            const buttons = document.querySelectorAll('#galeri-filters .filter-btn');
+            buttons.forEach(btn => {
+                btn.classList.remove('bg-deep-forest', 'text-white', 'border-deep-forest');
+                btn.classList.add('bg-white', 'text-gray-600', 'border-gray-300');
+            });
+            btnElement.classList.remove('bg-white', 'text-gray-600', 'border-gray-300');
+            btnElement.classList.add('bg-deep-forest', 'text-white', 'border-deep-forest');
+
+            const items = document.querySelectorAll('.galeri-item');
+            items.forEach(item => {
+                if (category === 'semua' || item.dataset.category === category) {
+                    item.classList.remove('item-hidden');
+                    item.classList.add('item-visible');
+                } else {
+                    item.classList.add('item-hidden');
+                    item.classList.remove('item-visible');
+                }
+            });
+        }
+
+        function openGalleryModal(imgSrc, title, desc) {
+            const modal = document.getElementById('gallery-modal');
+            const imgElement = document.getElementById('modal-img');
+            
+            imgElement.src = imgSrc;
+            document.getElementById('modal-title').innerText = title;
+            document.getElementById('modal-desc').innerText = desc;
+            
+            modal.classList.remove('hidden');
+            modal.style.display = 'flex'; 
+            void modal.offsetWidth; 
+            modal.classList.add('opacity-100');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeGalleryModal() {
+            const modal = document.getElementById('gallery-modal');
+            modal.classList.remove('opacity-100');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                modal.style.display = ''; 
+                document.getElementById('modal-img').src = ''; 
+            }, 300); 
+            document.body.style.overflow = '';
+        }
+
+        document.addEventListener('keydown', function(event) {
+            if (event.key === "Escape") {
+                const modal = document.getElementById('gallery-modal');
+                if (!modal.classList.contains('hidden')) {
+                    closeGalleryModal();
+                }
+            }
+        });
+
+        // FUNGSI LOAD MORE GURU & STAF
+        function toggleGuru() {
+            const extraGurus = document.querySelectorAll('.extra-guru');
+            const btn = document.getElementById('btn-toggle-guru');
+            const isHidden = extraGurus[0].classList.contains('hidden');
+
+            if (isHidden) {
+                // Tampilkan semua guru
+                extraGurus.forEach(guru => {
+                    guru.classList.remove('hidden');
+                    guru.classList.add('item-visible');
+                });
+                btn.innerHTML = 'Sembunyikan <i class="fas fa-chevron-up text-sm"></i>';
+            } else {
+                // Sembunyikan guru ekstra
+                extraGurus.forEach(guru => {
+                    guru.classList.add('hidden');
+                    guru.classList.remove('item-visible');
+                });
+                btn.innerHTML = 'Lihat Selengkapnya <i class="fas fa-chevron-down text-sm"></i>';
+                
+                // Scroll kembali perlahan ke bagian atas daftar guru agar tidak hilang fokus
+                const titleSection = document.getElementById('guru-section-title');
+                const navHeight = 80; // tinggi navbar
+                const elementPosition = titleSection.getBoundingClientRect().top;
+                const offsetPosition = elementPosition + window.pageYOffset - navHeight;
+
+                window.scrollTo({
+                    top: offsetPosition,
+                    behavior: "smooth"
+                });
+            }
+        }
+
+    </script>
+</body>
+</html>
